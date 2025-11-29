@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # minimal base line apps for running ansible
-apt -qq update && apt -y install curl git gpg nala python3 wget 
+sudo apt -qq update && apt -y install curl git gpg nala python3 wget 
 
 # install ansible repository
 #UBUNTU_CODENAME=jammy #use the ubuntu code name
@@ -9,13 +9,13 @@ apt -qq update && apt -y install curl git gpg nala python3 wget
 #echo "deb [signed-by=/usr/share/keyrings/ansible-archive-keyring.gpg] http://ppa.launchpad.net/ansible/ansible/ubuntu $UBUNTU_CODENAME main" | tee /etc/apt/sources.list.d/ansible.list
 
 # Run nala updateer
-nala fetch --fetches 16 --assume-yes --auto
+sudo nala fetch --fetches 16 --assume-yes --auto
 
 # install ansible
-nala install ansible --assume-yes
+sudo nala install ansible --assume-yes
 
 # install starship - its not in the offical repos
-curl -sS https://starship.rs/install.sh | sh
+sudo curl -sS https://starship.rs/install.sh | sh
 
 # run ansible
-ansible-pull -U https://github.com/zyzyx159/bootstrap.git -i "$(hostname --short),"
+sudo ansible-pull -U https://github.com/zyzyx159/bootstrap.git -i "$(hostname --short),"
