@@ -12,6 +12,21 @@
         user: zyzyx
         state: present
         key: "{{ lookup('url', 'https://github.com/zyzyx159.keys', split_lines=False) }}"
+    - name: install apps
+      apt:
+        name:
+          - stow
+          - zoxide
+          - fzf
+          - golang-go
+        state: latest
+    - name: Install lazygit from GitHub
+      ansible.builtin.unarchive:
+        src: "{{ lookup('url', 'https://api.github.com/repos/jesseduffield/lazygit/releases/latest', split_lines=false) | regex_search('browser_download_url.*(https://(.*?)_Linux_x86_64.tar.gz)', '\\1') | first }}"
+            dest: /usr/local/bin/
+                remote_src: true
+                    include: lazygit
+                        mode: '0755'   
     - name: make git folder
       ansible.builtin.file:
         path: /home/zyzyx/git/
@@ -19,19 +34,25 @@
         group: zyzyx
         state: directory
         mode: "0770"
-    - name: clone Neovim
+    - name: install neovim
       ansible.builtin.git:
         repo: https://github.com/neovim/neovim
-        dest: /home/zyzyx/git/neovim
-        depth: 1
-    - name: install Neovim
-      make:
-        chdir: /home/zyzyx/git/neovim
+        dest: /home/zyzyx/git/neovim/
+        version: stable
+        force: yes
+    - name: Build with RelWithDebInfo
+      ansible.builtin.make:
+        chdir: /home/zyzyx/git/neovim/
+        params:
+          CMAKE_BUILD_TYPE: "RelWithDebInfo"
+    - name: Install with sudo
+      ansible.builtin.make:
+        chdir: /home/zyzyx/git/neovim/
+        target: install
     - name: clone dotFiles
       ansible.builtin.git:
-        repo: https://github.com/zyzyx159/dotFiles
-        dest: /home/zyzyx/git/dotFiles
-        depth: 1
+       repo: https://github.com/zyzyx159/dotFiles
+       dest: /home/zyzyx/git/dotFiles
     - name: delete original dot files
       file:
         path: "{{ item }}"
@@ -39,21 +60,11 @@
       with_items:
         - ~/.config/kitty/
         - ~/.config/nvim/
-        - ~/.config/nvim-writing/
         - ~/.config/custScripts/
         - ~/.config/starship.toml
-        - ~/.config/terminator/
         - ~/.config/tmux/
         - ~/.zshrc
-    - name: link dot files
-      file:
-        src: "{{ item.path }}"
-        dest: "{{ item.dest }}"
-        with_items:
-          - { path: "~/git/dotFiles/kitty/", dest: "~/.config/kitty/" }
-          - { path: "~/git/dotFiles/nvim-programing/", dest: "~/.config/nvim/" }
-
-        owner: zyzyx
-        group: zyzyx
-        state: link
-        mode: "740"
+    - name: run Stow dotfiles
+      ansible.buitin.shell: stow -d ~/git/dotFiles/Stow -t ~
+      args:
+        chdir: ~/git/dotFiles/Stow
