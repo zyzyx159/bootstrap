@@ -9,14 +9,11 @@
     - name: install base apps
       apt:
         name:
-          - build-essential
-          - ca-certificates
-          - cmake
           - cmatrix
-          - gettext
-          - gnupg
+          - flatpak
+          - git
           - htop
-          - lsb-release
+          - kitty
           - lsd
           - sudo
           - tmux
