@@ -1,0 +1,13 @@
+---
+- name: Install Neovim build prerequisites via XBPS
+  community.general.xbps:
+    name:
+      - base-devel
+      - cmake
+      - curl
+      - git
+      - ninja
+      - gettext
+    state: present
+    update_cache: true
+

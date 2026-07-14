@@ -1,0 +1,13 @@
+---
+- name: Install Neovim build prerequisites via APT
+  ansible.builtin.apt:
+    name:
+      - ninja-build
+      - gettext
+      - cmake
+      - unzip
+      - curl
+      - build-essential
+    state: present
+    update_cache: true
+

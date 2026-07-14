@@ -7,8 +7,9 @@
       timezone:
         name: America/Chicago
     - name: install base apps
-      apt:
+      ansible.builtin.package:
         name:
+          - btop
           - cmatrix
           - flatpak
           - git
@@ -20,6 +21,37 @@
           - unzip
           - zsh
         state: latest
+    - name: OS specific stuff
+      ansible.builtin.include_tasks: "{{ item }}"
+      with_first_found:
+        - files:
+          - "tasks/{{ansible facts['os_family'] }}.yml"
+          - "tasks/default.yml"
+          skip: true
+    - name: Ensure Neovim source build directory exists
+      ansible.builtin.file:
+        path: /usr/local/src/neovim
+        state: directory
+        mode: '0755'
+    - name: Clone Neovim stable source code
+      ansible.builtin.git:
+        repo: 'https://github.com/neovim/neovim.git'
+        dest: /usr/local/src/neovim
+        version: stable
+        depth: 1
+      register: git_clone
+    - name: Compile and install Neovim from source
+      ansible.builtin.command:
+        cmd: make CMAKE_BUILD_TYPE=RelWithDebInfo && make install
+        chdir: /usr/local/src/neovim
+      # Only compiles if the source directory changed or updated
+      when: git_clone.changed
+    - name: Download and install chezmoi
+      ansible.builtin.shell: sh -c "$(curl -fsLS get.chezmoi.io)"
+      args:
+        creates: "/usr/local/bin/chezmoi"
+    - name: download and install starship
+      ansible.builtin.shell: curl -sS https://starship.rs/install.sh | sudo sh
     - name: copy sshd_config file
       copy:
         src: files/sshd_config
@@ -56,4 +88,10 @@
     - name: GHPush echo
       ansible.builtin.debug:
         msg: "ghpush {{ lookup('ansible.builtin.file', '/home/zyzyx/.ssh/ed25519_key.pub') }} zyzyx@{{ansible_hostname}}"
+    - name: Initialize and apply Chezmoi dotfiles
+      become: true
+      become_user: zyzyx
+      ansible.builtin.shell:
+        cmd: chezmoi init --apply git@github.com:zyzyx159/chezmoi.git
+        creates: "/home/zyzyx/.local/share/chezmoi" # Skips if already initialized
 

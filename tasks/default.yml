@@ -1,0 +1,5 @@
+---
+- name: Fail if the OS is completely unsupported
+  ansible.builtin.fail:
+    msg: "The operating system {{ ansible_facts['distribution'] }} is not configured for Neovim source builds."
+
