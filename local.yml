@@ -62,6 +62,12 @@
       args:
         creates: "/usr/local/bin/chezmoi"
 
+    - name: Ensure ~/.local/bin is in PATH for this session
+      # This ensures the next task can find the binary immediately
+      ansible.builtin.set_fact:
+        ansible_env: "{{ ansible_env | combine({'PATH': ansible_env.HOME + '/.local/bin:' + ansible_env.PATH}) }}"
+
+
     - name: Download and install Starship
       ansible.builtin.shell: |
         curl -sS https://starship.rs/install.sh | sh -s -- -y
