@@ -62,8 +62,18 @@
       args:
         creates: "/usr/local/bin/chezmoi"
 
-    - name: download and install starship
-      ansible.builtin.shell: curl -sS https://starship.rs/install.sh | sudo sh
+    - name: Download and install Starship
+      ansible.builtin.shell: |
+        curl -sS https://starship.rs/install.sh | sh -s -- -y
+      args:
+        creates: /usr/local/bin/starship
+
+    - name: Ensure Starship is executable
+      ansible.builtin.file:
+        path: /usr/local/bin/starship
+        mode: '0755'
+        owner: root
+        group: root
 
     - name: copy sshd_config file
       copy:
