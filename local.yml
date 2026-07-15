@@ -6,6 +6,7 @@
     - name: set time zone to America/Chicago
       timezone:
         name: America/Chicago
+
     - name: install base apps
       ansible.builtin.package:
         name:
@@ -21,6 +22,7 @@
           - unzip
           - zsh
         state: latest
+
     - name: OS specific stuff
       ansible.builtin.include_tasks: "{{ item }}"
       with_first_found:
@@ -28,11 +30,13 @@
           - "tasks/{{ansible_facts['os_family'] }}.yml"
           - "tasks/default.yml"
           skip: true
+
     - name: Ensure Neovim source build directory exists
       ansible.builtin.file:
         path: /usr/local/src/neovim
         state: directory
         mode: '0755'
+
     - name: Clone Neovim stable source code
       ansible.builtin.git:
         repo: 'https://github.com/neovim/neovim.git'
@@ -40,18 +44,27 @@
         version: stable
         depth: 1
       register: git_clone
-    - name: Compile and install Neovim from source
+
+    - name: Compile Neovim source code
       ansible.builtin.command:
-        cmd: make CMAKE_BUILD_TYPE=RelWithDebInfo && make install
+        cmd: make CMAKE_BUILD_TYPE=RelWithDebInfo
         chdir: /usr/local/src/neovim
-      # Only compiles if the source directory changed or updated
       when: git_clone.changed
+
+    - name: Install compiled Neovim binary
+      ansible.builtin.command:
+        cmd: make install
+        chdir: /usr/local/src/neovim
+      when: git_clone.changed
+
     - name: Download and install chezmoi
       ansible.builtin.shell: sh -c "$(curl -fsLS get.chezmoi.io)"
       args:
         creates: "/usr/local/bin/chezmoi"
+
     - name: download and install starship
       ansible.builtin.shell: curl -sS https://starship.rs/install.sh | sudo sh
+
     - name: copy sshd_config file
       copy:
         src: files/sshd_config
@@ -59,12 +72,14 @@
         owner: root
         group: root
         mode: "644"
+
     - name: add user zyzyx
       ansible.builtin.user:
         name: zyzyx
         shell: /bin/zsh
         groups: sudo
         append: yes
+
     - name: Create ~/.ssh
       ansible.builtin.file:
         path: /home/zyzyx/.ssh
@@ -72,11 +87,13 @@
         owner: zyzyx
         group: zyzyx
         mode: '0710'
+
     - name: add ssh key to authorised_keys
       authorized_key:
         user: zyzyx
         state: present
         key: "{{ lookup('url', 'https://github.com/zyzyx159.keys', split_lines=False) }}"
+
     - name: generate SSH key "{{ssh_key_filename}}"
       user:
         name: "zyzyx"
@@ -85,9 +102,11 @@
         ssh_key_bits: 4096
         ssh_key_file: .ssh/{{ssh_key_filename}}
         force: yes
+
     - name: GHPush echo
       ansible.builtin.debug:
         msg: "ghpush {{ lookup('ansible.builtin.file', '/home/zyzyx/.ssh/ed25519_key.pub') }} zyzyx@{{ansible_hostname}}"
+
     - name: Initialize and apply Chezmoi dotfiles
       become: true
       become_user: zyzyx
