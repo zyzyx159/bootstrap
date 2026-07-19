@@ -119,12 +119,12 @@
         generate_ssh_key: yes
         ssh_key_type: ed25519
         ssh_key_bits: 4096
-        ssh_key_file: .ssh/{{ssh_key_filename}}
+        ssh_key_file: .ssh/zyzyx@{{ ansible_facts['hostname'] }}
         force: yes
 
     - name: GHPush echo
       ansible.builtin.debug:
-        msg: "ghpush {{ lookup('ansible.builtin.file', '/home/zyzyx/.ssh/ed25519_key.pub') }} zyzyx@{{ansible_hostname}}"
+        msg: "ghpush {{ lookup('ansible.builtin.file', '/home/zyzyx/.ssh/zyzyx@{{ ansible_facts['hostname'] }}.pub') }} zyzyx@{{ansible_hostname}}"
 
     - name: Ensure Ansible remote tmp directory exists with correct permissions
       ansible.builtin.file:
