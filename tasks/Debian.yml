@@ -13,6 +13,7 @@
 - name: Add Fastfetch PPA repository
   ansible.builtin.apt_repository:
     repo: ppa:zhangsongcui3371/fastfetch
+    codename: noble #Foves mint to look at Unbuntu 24.04
     state: present
     update_cache: true
 
