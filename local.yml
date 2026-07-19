@@ -126,6 +126,15 @@
       ansible.builtin.debug:
         msg: "ghpush {{ lookup('ansible.builtin.file', '/home/zyzyx/.ssh/ed25519_key.pub') }} zyzyx@{{ansible_hostname}}"
 
+    - name: Ensure Ansible remote tmp directory exists with correct permissions
+      ansible.builtin.file:
+        path: /home/zyzyx/.ansible/tmp
+        state: directory
+        mode: '0755'
+        owner: zyzyx
+        group: zyzyx
+      become: false  # Runs as the standard user to maintain correct directory ownership
+
     - name: Initialize and apply Chezmoi dotfiles
       become: true
       become_user: zyzyx
