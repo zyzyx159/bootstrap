@@ -127,13 +127,6 @@
       become: true
       become_user: zyzyx
       ansible.builtin.shell:
-        cmd: chezmoi init --apply git@github.com:zyzyx159/chezmoi.git
-        creates: "/home/zyzyx/.local/share/chezmoi" # Skips if already initialized
-
-    - name: Initialize and apply Chezmoi dotfiles
-      become: true
-      become_user: zyzyx
-      ansible.builtin.shell:
-        cmd: chezmoi init --apply github.com/zyzyx159/chezmoi.git
+        cmd: chezmoi init --apply https://github.com/zyzyx159/chezmoi.git
         creates: "/home/zyzyx/.local/share/chezmoi" # Skips if already initialized
 
