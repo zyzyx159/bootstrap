@@ -16,6 +16,7 @@
           - fzf
           - git
           - htop
+          - jq # so nerdfont installer will run
           - keychain
           - kitty
           - lsd
