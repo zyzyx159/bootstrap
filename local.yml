@@ -57,8 +57,9 @@
         chdir: /usr/local/src/neovim
       when: git_clone.changed
 
-    - name: Download and install chezmoi
-      ansible.builtin.shell: sh -c "$(curl -fsLS get.chezmoi.io)"
+    - name: Download and install chezmoi to /usr/local/bin
+      ansible.builtin.shell: sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin
+      become: true
       args:
         creates: "/usr/local/bin/chezmoi"
 
