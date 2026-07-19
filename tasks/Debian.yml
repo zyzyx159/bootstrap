@@ -11,3 +11,18 @@
     state: present
     update_cache: true
 
+- name: Install Fastfetch on Linux Mint
+  hosts: all
+  become: true
+  tasks:
+
+    - name: Add Fastfetch PPA repository
+      ansible.builtin.apt_repository:
+        repo: ppa:zhangsongcui3371/fastfetch
+        state: present
+        update_cache: true
+
+    - name: Install Fastfetch package
+      ansible.builtin.apt:
+        name: fastfetch
+        state: present
