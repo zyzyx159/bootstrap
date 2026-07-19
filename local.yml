@@ -123,8 +123,10 @@
         force: yes
 
     - name: GHPush echo
+      vars:
+        key_path: "/home/zyzyx/.ssh/zyzyx@{{ ansible_facts['hostname'] }}.pub"
       ansible.builtin.debug:
-        msg: "ghpush {{ lookup('ansible.builtin.file', '/home/zyzyx/.ssh/zyzyx@{{ ansible_facts['hostname'] }}.pub') }} zyzyx@{{ansible_hostname}}"
+        msg: "ghpush {{ lookup('ansible.builtin.file', key_path) }} zyzyx@{{ ansible_hostname }}"
 
     - name: Ensure Ansible remote tmp directory exists with correct permissions
       ansible.builtin.file:
