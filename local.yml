@@ -13,13 +13,16 @@
           - btop
           - cmatrix
           - flatpak
+          - fzf
           - git
           - htop
+          - keychain
           - kitty
           - lsd
           - sudo
           - tmux
           - unzip
+          - zoxide
           - zsh
         state: latest
 
