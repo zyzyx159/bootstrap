@@ -1,4 +1,3 @@
----
 - name: Install Neovim build prerequisites via APT
   ansible.builtin.apt:
     name:
@@ -10,11 +9,6 @@
       - build-essential
     state: present
     update_cache: true
-
-- name: Install Fastfetch on Linux Mint
-  hosts: all
-  become: true
-  tasks:
 
 - name: Add Fastfetch PPA repository
   ansible.builtin.apt_repository:
