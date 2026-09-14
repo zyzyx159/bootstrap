@@ -1,6 +1,6 @@
 # ansible-zyzyx
 
-rapid deploy setup for Debian
+rapid deploy setup for Void Linux
 
 Zyzyx, you always forget this line
 
