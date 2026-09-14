@@ -100,7 +100,7 @@
       ansible.builtin.user:
         name: zyzyx
         shell: /bin/zsh
-        groups: sudo
+        groups: wheel
         append: yes
 
     - name: Create ~/.ssh
