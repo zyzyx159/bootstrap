@@ -4,8 +4,11 @@
     ssh_key_filename: ed25519_key
   tasks:
     - name: set time zone to America/Chicago
-      timezone:
-        name: America/Chicago
+      ansible.builtin.file:
+        src: /usr/share/zoneinfo/America/Chicago
+        dest: /etc/localtime
+        state: link
+        force: yes
 
     - name: install base apps
       ansible.builtin.package:
